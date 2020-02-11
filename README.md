@@ -29,3 +29,31 @@ This is a brief guide to be used as reference. More detailed info about creating
 1. ssh into instance and update system
    - `apt-get update`
    - `apt-get upgrade`
+
+## Vapor Server Setup
+
+1. ssh into instance if not already in
+
+1. Switch to root user `sudo su -` (needed for updating and installing)
+
+1. Add the signing key from the Vapor APT repository. This allows apt-get to verify the packages it downloads from the repository.
+   - `wget -q https://repo.vapor.codes/apt/keyring.gpg -O- | apt-key add -`
+   
+1. Add the correct APT repository for your Ubuntu version.
+   - `echo "deb https://repo.vapor.codes/apt $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/vapor.list`
+   
+1. Update apt `apt-get update`
+
+1. Install Swift and the SSL C bindings. `apt-get install swift ctls`
+
+1. Verify setup and view Swift version `swift --version`
+
+1. Add your instance ssh to your github if not there already
+
+1. Exit from root user `exit`
+
+1. Clone your project and cd to project directory 
+
+1. Create a build `swift build -c release`
+
+1. Test the build runs `./.build/release/Run`
