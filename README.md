@@ -81,3 +81,70 @@ This will keep the server running when you exit ssh and will restart it when it 
 1. Reread supervisor configs `supervisorctl reread`
 
 1. Updated supervisor with new/updated config `supervisorctl update`
+
+### Setup Nginx 
+Simple proxy server that will sit in front of your server to handle routing traffic to the correct places before touching your core server. This will also be the place where you will enable SSL for HTTPS traffic and handle load balancing
+   - NGINX documentation: https://nginx.org/en/docs/
+
+1. Switch to root user `sudo su -` if not a root user
+
+1. Install Nginx `apt-get install nginx`
+
+1. Create new Nginx configuration file `vim /etc/nginx/conf.d/projectName.conf`
+   ```
+   server { 
+      ## Server name is iP or domain name(s)
+      server_name example.com www.example.com;
+    
+      root /home/ubuntu/ProjectDirectory/Public; 
+      try_files $uri @proxy;
+
+      location @proxy {
+         proxy_pass http://127.0.0.1:8080;
+      
+         proxy_set_header Host $host;
+         proxy_set_header X-Real-IP $remote_addr;
+         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; 
+      
+         proxy_connect_timeout 3s;
+         proxy_read_timeout 10s;
+      } 
+   }
+   ```
+   
+1. Start nginx `systemctl start nginx`
+   - can also restart and stop `systemctl restart nginx` or `systemctl stop nginx`
+   
+#### Add HTTPS to your nginx server
+Documentation found at https://docs.nginx.com/nginx/admin-guide/security-controls/terminating-ssl-http/ but I will be adding it via Let's Encrypt SSL/TLS https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/
+
+1. Switch to root user `sudo su -`
+
+1. Create the certbot repository `add-apt-repository ppa:certbot/certbot`
+
+1. Update and install certbot
+   - `apt-get update`
+   - `apt-get install python-certbot-nginx`
+
+1. Generate certs with certbot with your domain `sudo certbot --nginx -d example.com -d www.example.com`
+   - Follow the instrutions, but it should show something like this if successful 
+   ```
+   Congratulations! You have successfully enabled https://example.com and https://www.example.com 
+
+   -------------------------------------------------------------------------------------
+   IMPORTANT NOTES: 
+
+   Congratulations! Your certificate and chain have been saved at: 
+   /etc/letsencrypt/live/example.com/fullchain.pem 
+   Your key file has been saved at: 
+   /etc/letsencrypt/live/example.com//privkey.pem
+   Your cert will expire on 2017-12-12.
+   ```
+   
+1. It should have updated your nginx config file /etc/nginx/conf.d/projectName.conf
+
+1. These certbot certificates expire after 90 days so we need to add a cron job to renew and reload within 30 days. So open crontab file
+   - crontab -e
+   
+1. Add the command to run daily. This will run it every day at noon. The command checks to see if the certificate on the server will expire within the next 30 days, and renews it if so. The --quiet directive tells certbot not to generate output. 
+   - `0 12 * * * /usr/bin/certbot renew --quiet`
