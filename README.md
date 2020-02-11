@@ -1,4 +1,4 @@
-# Steps-to-setup-EC2-instance-on-AWS
+# Overview of crucial steps to perform to setup a server on a EC2 instance on AWS
 Steps to setup an EC2 instance on AWS with an Nginx proxy server in front. 
 
 This is a brief guide to be used as reference. More detailed info about creating an instance is provided by Amazon at https://docs.aws.amazon.com/ec2/
