@@ -144,7 +144,7 @@ Documentation found at https://docs.nginx.com/nginx/admin-guide/security-control
 1. It should have updated your nginx config file /etc/nginx/conf.d/projectName.conf
 
 1. These certbot certificates expire after 90 days so we need to add a cron job to renew and reload within 30 days. So open crontab file
-   - crontab -e
+   - `crontab -e`
    
 1. Add the command to run daily. This will run it every day at noon. The command checks to see if the certificate on the server will expire within the next 30 days, and renews it if so. The --quiet directive tells certbot not to generate output. 
    - `0 12 * * * /usr/bin/certbot renew --quiet`
