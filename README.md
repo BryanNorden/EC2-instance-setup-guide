@@ -57,3 +57,27 @@ This is a brief guide to be used as reference. More detailed info about creating
 1. Create a build `swift build -c release`
 
 1. Test the build runs `./.build/release/Run`
+
+### Setup Supervisor 
+This will keep the server running when you exit ssh and will restart it when it crashes
+   - Supervisor documentation: http://supervisord.org
+
+1. Switch to root user `sudo su -`
+
+1. Should already be installed, but if not install `apt-get install supervisor`
+
+1. Create a new supervisor config with your server name `vim /etc/supervisor/conf.d/configName.conf`
+   ```
+   [program: ProjectName]
+   command=/home/ubuntu/projectDirectory/.build/release/Run serve
+   directory=/home/ubuntu/projectDirectory/
+   autostart=true
+   autorestart=true
+   user=ubuntu
+   stdout_logfile=/var/log/supervisor/ProjectName-out.log
+   stderr_logfile=/var/log/supervisor/ProjectName-err.log
+   ```
+   
+1. Reread supervisor configs `supervisorctl reread`
+
+1. Updated supervisor with new/updated config `supervisorctl update`
