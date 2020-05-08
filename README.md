@@ -20,13 +20,22 @@ This is a brief guide to be used as reference. More detailed info about creating
 
 1. Optional - add database if needed
 
-1. create a ssh key 
-   - I like to create a ssh host shortcut in the `~/.ssh/config`
+1. create a ssh key on your computer for your aws ssh 
+   - I like to make seperate ones for different things in case I need to destroy a key later
 
 1. Mark your ssh private key as read-only otherwise AWS will refuse the connection
    - `chmod 600 ~/.ssh/key` or `chmod 600 /path/to/your/ssh/key` 
    
-1. ssh into instance and update system
+1. ssh into instance `-i /location/to/your/ssh/key ubuntu@your-aws-ip`
+   - (Optional) create a shortcut in `~/ssh/config` 
+         Host nameForShortcut
+         HostName xx.xxx.xxx.xx
+         User ubuntu
+         IdentityFile /location/to/your/ssh/key.pem
+    - now you can do `ssh nameForShortcut` in terminal (makes it easier since you will ssh into it a lot) 
+   
+1. Got to root access and update system
+   - `sudo su -`
    - `apt-get update`
    - `apt-get upgrade`
 
